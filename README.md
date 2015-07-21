@@ -1,7 +1,7 @@
 # V3ctor WareHouse #
 
 ## Description ##
-V3ctor WareHouse Core for MongoDb and MySql
+V3ctor WareHouse Core for MongoDb.
 
 ## Requirements ##
 * [PHP 5.4.1 or higher](http://www.php.net/)
@@ -40,6 +40,12 @@ $v3ctor = V3WareHouse::getInstance('v3Mongo', $hostname, $username, $password, $
 
 if (! $v3ctor->isConnected())
     die("Unable load V3ctor WareHouse");
+
+$doc = array('r' => 666);
+
+$newObject = $v3ctor->newObject("demo", $doc);
+
+var_dump($newObject);
 
 ~~~
 
