@@ -1,7 +1,7 @@
 {
     "name": "yorch/v3wh",
-    "description": "V3ctor WareHouse Core for MongoDb",
-    "keywords": ["WareHouse", "MongoDb", "Database"],
+    "description": "V3ctor WareHouse Core for MongoDb and MySQL",
+    "keywords": ["WareHouse", "MongoDb", "MySQL"],
     "homepage": "https://github.com/yorch81/v3wh",
     "type": "library",
     "license": "Apache-2.0",

@@ -1,0 +1,7 @@
+USE test;
+
+CREATE TABLE `demo` (
+  `_id` int(11) NOT NULL AUTO_INCREMENT,
+  `r` int(11) NOT NULL,
+  PRIMARY KEY (`_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;

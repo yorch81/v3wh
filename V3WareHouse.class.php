@@ -63,7 +63,7 @@ class V3WareHouse
 		}
 		else{
 			$this->_v3wh = null;
-			die("DataBase Type Not Implemented");
+			die("DataBase Type Not Implemented !!!");
 		}
 	}
 
@@ -127,7 +127,7 @@ class V3WareHouse
 	 * Find by Pattern (Query)
 	 *
 	 * @param  string $entity Entity
-	 * @param  string $query  Query Pattern
+	 * @param  array  $query  Query Pattern
 	 * @return array Object
 	 */
 	public function query($entity, $query)
@@ -170,6 +170,19 @@ class V3WareHouse
 	public function deleteObject($entity, $_id)
 	{
 		return $this->_v3wh->deleteObject($entity, $_id);
+	}
+
+	/**
+	 * Create Entity
+	 * 
+	 * @param  string $entityName Name of Entity
+	 * @param  array  $jsonConfig Json Configuration
+	 * @return boolean
+	 */
+	public function createEntity($entityName, $jsonConfig)
+	{
+		// Not Implemented
+		return false;
 	}
 }
 ?>

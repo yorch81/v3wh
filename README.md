@@ -1,13 +1,13 @@
 # V3 WareHouse Core #
 
 ## Description ##
-V3ctor WareHouse Core for MongoDb.
+V3ctor WareHouse Core for MongoDb and MySQL.
 
 ## Requirements ##
 * [PHP 5.4.1 or higher](http://www.php.net/)
 * [Medoo](http://medoo.in/)
-* [MySQL](https://www.mysql.com/)
 * [MongoDb](https://www.mongodb.com/)
+* [MySQL](https://www.mysql.com/)
 
 ## Developer Documentation ##
 Execute phpdoc -d v3wh/
@@ -51,6 +51,7 @@ var_dump($newObject);
 
 ## Notes ##
 v3wh is a Core for MongoDb and needs php mongo module.
+For MySQL support is required a _id field, check demo.sql.
 
 ## References ##
 http://es.wikipedia.org/wiki/Singleton

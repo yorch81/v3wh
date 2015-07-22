@@ -68,7 +68,7 @@ abstract class WareHouse
 	 * Find by Pattern (Query)
 	 *
 	 * @param  string $entity Entity
-	 * @param  string $query  Query Pattern
+	 * @param  array $query  Query Pattern
 	 * @return array Object
 	 */
 	public abstract function query($entity, $query);
@@ -225,7 +225,7 @@ class v3Mongo extends WareHouse
 	 * Find by Pattern (Query)
 	 *
 	 * @param  string $entity Entity
-	 * @param  string $query  Query Pattern
+	 * @param  array  $query  Query Pattern
 	 * @return array Object
 	 */
 	public function query($entity, $query)
@@ -382,6 +382,8 @@ class V3MySQL extends WareHouse
 	{
 		$this->_key = $key;
 
+		$this->initLog();
+
 		try {
 			$this->_conn = new medoo([
 			    'database_type' => 'mysql',
@@ -397,6 +399,7 @@ class V3MySQL extends WareHouse
 			]); 
         }
         catch (Exception $e) {
+        	$this->_log->addError($e->getMessage());
             $this->_conn = null;
         }
 	}
@@ -411,10 +414,14 @@ class V3MySQL extends WareHouse
 	public function findObject($entity, $_id)
 	{
 		$retValue = array();
-		$query = sprintf("SELECT * FROM %s WHERE _id = %s", $entity, $_id);
+
+		$query = array('_id' => $_id);
 
 		if (! is_null($this->_conn)){
-			$retValue = $this->_conn->query($query)->fetchAll();
+			$retValue = $this->_conn->select($entity, '*', $query);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = array();
 		}
 
 		return $retValue;
@@ -424,7 +431,7 @@ class V3MySQL extends WareHouse
 	 * Find by Pattern (Query)
 	 *
 	 * @param  string $entity Entity
-	 * @param  string $query  Query Pattern
+	 * @param  array  $query  Query Pattern
 	 * @return array Object
 	 */
 	public function query($entity, $query)
@@ -433,6 +440,9 @@ class V3MySQL extends WareHouse
 
 		if (! is_null($this->_conn)){
 			$retValue = $this->_conn->select($entity, '*', $query);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = array();
 		}
 
 		return $retValue;
@@ -452,10 +462,11 @@ class V3MySQL extends WareHouse
 		if (! is_null($this->_conn)){
 			$last_user_id = $this->_conn->insert($entity, array($jsonObject));
 
-			return array('_id' => $last_user_id);
+			if (! $this->error($this->_conn->error()))
+				return $this->findObject($entity, $last_user_id);
 		}
-		else
-			return $retValue;
+		
+		return $retValue;
 	}
 
 	/**
@@ -473,6 +484,9 @@ class V3MySQL extends WareHouse
 
 		if (! is_null($this->_conn)){
 			$this->_conn->update($entity, $jsonObject, $arrayWhere);
+
+			if ($this->error($this->_conn->error()))
+				return false;
 		}
 		
 		return $retValue;
@@ -492,6 +506,9 @@ class V3MySQL extends WareHouse
 
 		if (! is_null($this->_conn)){
 			$this->_conn->delete($entity, $arrayWhere);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = false;
 		}
 		
 		return $retValue;
@@ -508,6 +525,22 @@ class V3MySQL extends WareHouse
 	{
 		// Not Implemented for MySQL
 		return false;
+	}
+
+	/**
+	 * Check error in Query and write log
+	 * 
+	 * @param  array  $errorObj Error Array Medoo Type
+	 * @return boolean
+	 */
+	private function error($errorObj)
+	{
+		if ($errorObj[0] == '00000')
+			return false;
+		else{
+			$this->_log->addError($errorObj[2]);
+			return true;
+		}
 	}
 }
 
