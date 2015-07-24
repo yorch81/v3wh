@@ -358,16 +358,16 @@ class v3Mongo extends WareHouse
 }
 
 /**
- * V3MySQL WareHouse for MySQL or MariaDb
+ * v3MySQL WareHouse for MySQL or MariaDb
  *
- * @category   V3MySQL
- * @package    V3MySQL
+ * @category   v3MySQL
+ * @package    v3MySQL
  * @copyright  Copyright 2015 Jorge Alberto Ponce Turrubiates
  * @license    http://www.apache.org/licenses/LICENSE-2.0
  * @version    1.0.0, 2015-05-14
  * @author     Jorge Alberto Ponce Turrubiates (the.yorch@gmail.com)
  */
-class V3MySQL extends WareHouse
+class v3MySQL extends WareHouse
 {
 	/**
 	 * Constructor of class
