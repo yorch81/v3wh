@@ -184,5 +184,16 @@ class V3WareHouse
 		// Not Implemented
 		return false;
 	}
+
+	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public function execute ($command)
+	{
+		return $this->_v3wh->execute($command);
+	}
 }
 ?>

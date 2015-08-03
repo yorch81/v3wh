@@ -143,5 +143,16 @@ class V3WareHouseMyTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    /**
+     * Test Execute
+     */
+    public function testexecute() {
+        $result = $this->v3ctor->execute('SELECT 1 AS FIELD');
+
+        $total = count($result);
+
+        $this->assertGreaterThan(0, $total);
+    }
 }
 ?>

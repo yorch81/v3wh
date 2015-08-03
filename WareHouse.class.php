@@ -111,6 +111,14 @@ abstract class WareHouse
 	public abstract function createEntity($entityName, $jsonConfig);
 
 	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public abstract function execute ($command);
+
+	/**
 	 * Return if exists connection
 	 *
 	 * @return boolean
@@ -355,6 +363,18 @@ class v3Mongo extends WareHouse
 		// Not Implemented for MongoDb
 		return false;
 	}
+
+	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public function execute ($command)
+	{
+		// Not Implemented for MongoDb
+		return array();
+	}
 }
 
 /**
@@ -525,6 +545,22 @@ class v3MySQL extends WareHouse
 	{
 		// Not Implemented for MySQL
 		return false;
+	}
+
+	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public function execute ($command)
+	{
+		$retValue = $this->_conn->query($command)->fetchAll();
+
+		if ($this->error($this->_conn->error()))
+			return array();
+		else
+			return $retValue;
 	}
 
 	/**
