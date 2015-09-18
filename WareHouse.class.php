@@ -392,8 +392,8 @@ class v3MySQL extends WareHouse
 	/**
 	 * Constructor of class
 	 * 
-	 * @param string $hostname   HostName MongoDb
-	 * @param string $username   User of MongoDb
+	 * @param string $hostname   HostName
+	 * @param string $username   User of MySQL
 	 * @param string $password   Password of User
 	 * @param string $dbname     DataBase Name
 	 * @param string $key        V3ctorWH Key
@@ -580,4 +580,206 @@ class v3MySQL extends WareHouse
 	}
 }
 
+/**
+ * v3SQLSrv WareHouse for SQL Server
+ *
+ * @category   v3SQLSrv
+ * @package    v3SQLSrv
+ * @copyright  Copyright 2015 Jorge Alberto Ponce Turrubiates
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @version    1.0.0, 2015-09-02
+ * @author     Jorge Alberto Ponce Turrubiates (the.yorch@gmail.com)
+ */
+class v3SQLSrv extends WareHouse
+{
+	/**
+	 * Constructor of class
+	 * 
+	 * @param string $hostname   HostName 
+	 * @param string $username   User of SQL Server
+	 * @param string $password   Password of User
+	 * @param string $dbname     DataBase Name
+	 * @param string $key        V3ctorWH Key
+	 */
+	public function __construct($hostname, $username, $password, $dbname, $key)
+	{
+		$this->_key = $key;
+
+		$this->initLog();
+
+		try {
+			$this->_conn = new medoo([
+			    'database_type' => 'mssql',
+			    'database_name' => $dbname,
+			    'server' => $hostname,
+			    'username' => $username,
+			    'password' => $password,
+			    'charset' => 'utf8',
+			    'port' => 1433,
+			    'option' => [
+			        PDO::ATTR_CASE => PDO::CASE_NATURAL
+			    ]
+			]); 
+        }
+        catch (Exception $e) {
+        	$this->_log->addError($e->getMessage());
+            $this->_conn = null;
+        }
+	}
+
+	/**
+	 * Find Object by _id
+	 *
+	 * @param  string $entity Entity
+	 * @param  string $_id 	  Identificator of Object
+	 * @return array Object
+	 */
+	public function findObject($entity, $_id)
+	{
+		$retValue = array();
+
+		$query = array('_id' => $_id);
+
+		if (! is_null($this->_conn)){
+			$retValue = $this->_conn->select($entity, '*', $query);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = array();
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Find by Pattern (Query)
+	 *
+	 * @param  string $entity Entity
+	 * @param  array  $query  Query Pattern
+	 * @return array Object
+	 */
+	public function query($entity, $query)
+	{
+		$retValue = array();
+
+		if (! is_null($this->_conn)){
+			$retValue = $this->_conn->select($entity, '*', $query);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = array();
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Create New Object
+	 *
+	 * @param  string $entity    Entity
+	 * @param  array $jsonObject Json Object to Insert
+	 * @return array Inserted Object
+	 */
+	public function newObject($entity, $jsonObject)
+	{
+		$retValue = array();
+
+		if (! is_null($this->_conn)){
+			$last_user_id = $this->_conn->insert($entity, array($jsonObject));
+
+			if (! $this->error($this->_conn->error()))
+				return $this->findObject($entity, $last_user_id);
+		}
+		
+		return $retValue;
+	}
+
+	/**
+	 * Update a Object by _id
+	 *
+	 * @param  string $entity    Entity
+	 * @param  string $_id       Identificator of Object
+	 * @param  array $jsonObject New Json Object
+	 * @return boolean
+	 */
+	public function updateObject($entity, $_id, $jsonObject)
+	{
+		$retValue = true;
+		$arrayWhere = array('_id' => $_id);
+
+		if (! is_null($this->_conn)){
+			$this->_conn->update($entity, $jsonObject, $arrayWhere);
+
+			if ($this->error($this->_conn->error()))
+				return false;
+		}
+		
+		return $retValue;
+	}
+
+	/**
+	 * Delete Object by _id
+	 *
+	 * @param  string $entity Entity
+	 * @param  string $_id    Identificator of Object
+	 * @return boolean
+	 */
+	public function deleteObject($entity, $_id)
+	{
+		$retValue = true;
+		$arrayWhere = array('_id' => $_id);
+
+		if (! is_null($this->_conn)){
+			$this->_conn->delete($entity, $arrayWhere);
+
+			if ($this->error($this->_conn->error()))
+				$retValue = false;
+		}
+		
+		return $retValue;
+	}
+
+	/**
+	 * Create Entity
+	 * 
+	 * @param  string $entityName Name of Entity
+	 * @param  array  $jsonConfig Json Configuration
+	 * @return boolean
+	 */
+	public function createEntity($entityName, $jsonConfig)
+	{
+		// Not Implemented for SQL Server
+		return false;
+	}
+
+	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public function execute ($command)
+	{
+		$retValue = $this->_conn->query($command)->fetchAll();
+
+		if ($this->error($this->_conn->error()))
+			return array();
+		else
+			return $retValue;
+	}
+
+	/**
+	 * Check error in Query and write log
+	 * 
+	 * @param  array  $errorObj Error Array Medoo Type
+	 * @return boolean
+	 */
+	private function error($errorObj)
+	{
+		if ($errorObj[0] == '00000')
+			return false;
+		else{
+			$this->_log->addError($errorObj[2]);
+			return true;
+		}
+	}
+}
 ?>
