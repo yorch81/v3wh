@@ -208,10 +208,11 @@ class v3Mongo extends WareHouse
 	public function findObject($entity, $_id)
 	{
 		$retValue = array();
-		$query = array('_id' => new MongoId($_id));
 
-		if (! is_null($this->_db)){
-			try{
+		try{
+			$query = array('_id' => new MongoId($_id));
+
+			if (! is_null($this->_db)){
 				$mongo = $this->_db->selectCollection($entity);
 
 				// Find Object
@@ -220,10 +221,9 @@ class v3Mongo extends WareHouse
 				if (is_null($retValue))
 					$retValue = array();
 			}
-			catch(Exception $e) {
-				$this->_log->addError($e->getMessage());
-			}
-			
+		}
+		catch(Exception $e) {
+			$this->_log->addError($e->getMessage());
 		}
 
 		return $retValue;
@@ -299,22 +299,23 @@ class v3Mongo extends WareHouse
 	public function updateObject($entity, $_id, $jsonObject)
 	{
 		$retValue = true;
-		$query = array('_id' => new MongoId($_id));
-		$jsonUpd = array('$set' => $jsonObject);
 
-		if (! is_null($this->_db)){
-			try {
-			    $mongo = $this->_db->selectCollection($entity);
+		try{
+			$query = array('_id' => new MongoId($_id));
+			$jsonUpd = array('$set' => $jsonObject);
+
+			if (! is_null($this->_db)){
+				$mongo = $this->_db->selectCollection($entity);
 
 			    // Update Object
 			    $result = $mongo->update($query, $jsonUpd, array('w' => 1));
 
 			    $retValue = $result["updatedExisting"];
 			}
-			catch (MongoCursorException $e) {
-				$this->_log->addError($e->getMessage());
-			    $retValue = false;
-			}
+		}
+		catch (Exception $e) {
+			$this->_log->addError($e->getMessage());
+		    $retValue = false;
 		}
 
 		return $retValue;
@@ -330,11 +331,12 @@ class v3Mongo extends WareHouse
 	public function deleteObject($entity, $_id)
 	{
 		$retValue = false;
-		$query = array('_id' => new MongoId($_id));
 
-		if (! is_null($this->_db)){
-			try {
-			    $mongo = $this->_db->selectCollection($entity);
+		try{
+			$query = array('_id' => new MongoId($_id));
+
+			if (! is_null($this->_db)){
+				$mongo = $this->_db->selectCollection($entity);
 
 			    // Remove Object
 				$result = $mongo->remove($query, array('w' => 1));
@@ -342,10 +344,10 @@ class v3Mongo extends WareHouse
 				if ($result["n"] > 0)
 					$retValue = true;
 			}
-			catch (MongoCursorException $e) {
-				$this->_log->addError($e->getMessage());
-			    $retValue = false;
-			}
+		}
+		catch (Exception $e) {
+			$this->_log->addError($e->getMessage());
+		    $retValue = false;
 		}
 
 		return $retValue;
