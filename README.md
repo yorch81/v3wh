@@ -36,7 +36,7 @@ Execute composer.phar install
 ## Example ##
 ~~~
 
-$v3ctor = V3WareHouse::getInstance('v3Mongo', $hostname, $username, $password, $dbname, $key);
+$v3ctor = V3WareHouse::getInstance('v3Mongo', $hostname, $username, $password, $dbname, $port);
 
 if (! $v3ctor->isConnected())
     die("Unable load V3ctor WareHouse");
@@ -51,7 +51,7 @@ var_dump($newObject);
 
 ## Notes ##
 v3wh is a Core for MongoDb and needs php mongo module.
-For MySQL support is required a _id field, check demo.sql.
+For MySQL support is required a _id field in the table, check demo.sql.
 
 ## References ##
 http://es.wikipedia.org/wiki/Singleton
