@@ -40,9 +40,9 @@ class V3WareHouseMyTest extends PHPUnit_Framework_TestCase
     	$username = $GLOBALS["username"];
     	$password = $GLOBALS["password"];
     	$dbname   = $GLOBALS["dbname"];
-    	$key      = $GLOBALS["key"];		
+    	$port     = $GLOBALS["port"];		
 
-    	$this->v3ctor = V3WareHouse::getInstance('V3MySQL', $hostname, $username, $password, $dbname, $key);
+    	$this->v3ctor = V3WareHouse::getInstance('V3MySQL', $hostname, $username, $password, $dbname, $port);
     }
 
     /**

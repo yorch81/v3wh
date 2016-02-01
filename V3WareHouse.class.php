@@ -39,12 +39,11 @@ class V3WareHouse
 
 	/**
      * Instance Handler
+     * 
      * @var object $_v3wh Abstract Connection Handler
-     *
      * @access private
      */
 	private $_v3wh;
-
 
 	/**
 	 * Constructor of class
@@ -54,12 +53,12 @@ class V3WareHouse
 	 * @param string $username User Name
 	 * @param string $password Password
 	 * @param string $dbname   DataBase Name
-	 * @param string $key      V3ctorWH Key
+	 * @param string $port     DataBase Port
 	 */
-	private function __construct($dbtype, $hostname, $username, $password, $dbname, $key)
+	private function __construct($dbtype, $hostname, $username, $password, $dbname, $port)
 	{
 		if(class_exists($dbtype)){
-			$this->_v3wh = new $dbtype($hostname, $username, $password, $dbname, $key);
+			$this->_v3wh = new $dbtype($hostname, $username, $password, $dbname, $port);
 		}
 		else{
 			$this->_v3wh = null;
@@ -75,10 +74,10 @@ class V3WareHouse
 	 * @param string $username User Name
 	 * @param string $password Password
 	 * @param string $dbname   DataBase Name
-	 * @param string $key      V3ctorWH Key
+	 * @param string $port     DataBase Port
 	 * @return resource | null
 	 */
-	public static function getInstance($dbtype = 'v3Mongo', $hostname = '', $username = '', $password = '', $dbname = '', $key = '')
+	public static function getInstance($dbtype = 'v3Mongo', $hostname = '', $username = '', $password = '', $dbname = '', $port = 27017)
 	{
 		// If exists Instance return same Instance
 		if(self::$_instance){
@@ -86,7 +85,7 @@ class V3WareHouse
 		}
 		else{
 			$class = __CLASS__;
-			self::$_instance = new $class($dbtype, $hostname, $username, $password, $dbname, $key);
+			self::$_instance = new $class($dbtype, $hostname, $username, $password, $dbname, $port);
 			return self::$_instance;
 		}
 	}

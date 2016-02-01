@@ -40,14 +40,6 @@ abstract class WareHouse
 	protected $_conn = null;
 
 	/**
-     * V3ctorWH Key
-     *
-     * @var string $_key V3ctorWH Key
-     * @access private
-     */
-	protected $_key = null;
-
-	/**
      * Log Instance
      *
      * @var object $_log Log Instance
@@ -129,16 +121,6 @@ abstract class WareHouse
 	}
 
 	/**
-	 * Gets V3ctorWH Key
-	 * 
-	 * @return string V3ctorWH Key
-	 */
-	public function getKey()
-	{
-		return $this->_key;
-	}
-
-	/**
 	 * Initialize Log
 	 */
 	public function initLog()
@@ -178,16 +160,14 @@ class v3Mongo extends WareHouse
 	 * @param string $username   User of MongoDb
 	 * @param string $password   Password of User
 	 * @param string $dbname     DataBase Name
-	 * @param string $key        V3ctorWH Key
+	 * @param string $port       DataBase Port 
 	 */
-	public function __construct($hostname, $username, $password, $dbname, $key)
+	public function __construct($hostname, $username, $password, $dbname, $port)
 	{
-		$this->_key = $key;
-
 		$this->initLog();
 
 		try{
-            $this->_conn = new Mongo('mongodb://' . $username . ':' . $password . '@' . $hostname .':27017/' . $dbname);
+            $this->_conn = new Mongo('mongodb://' . $username . ':' . $password . '@' . $hostname . ':' . $port . '/' . $dbname);
 
 			if (! is_null($this->_conn))
 				$this->_db = $this->_conn->selectDB($dbname);
@@ -398,12 +378,10 @@ class v3MySQL extends WareHouse
 	 * @param string $username   User of MySQL
 	 * @param string $password   Password of User
 	 * @param string $dbname     DataBase Name
-	 * @param string $key        V3ctorWH Key
+	 * @param string $port       DataBase Port
 	 */
-	public function __construct($hostname, $username, $password, $dbname, $key)
+	public function __construct($hostname, $username, $password, $dbname, $port)
 	{
-		$this->_key = $key;
-
 		$this->initLog();
 
 		try {
@@ -414,7 +392,7 @@ class v3MySQL extends WareHouse
 			    'username' => $username,
 			    'password' => $password,
 			    'charset' => 'utf8',
-			    'port' => 3306,
+			    'port' => $port,
 			    'option' => [
 			        PDO::ATTR_CASE => PDO::CASE_NATURAL
 			    ]
@@ -601,12 +579,10 @@ class v3SQLSrv extends WareHouse
 	 * @param string $username   User of SQL Server
 	 * @param string $password   Password of User
 	 * @param string $dbname     DataBase Name
-	 * @param string $key        V3ctorWH Key
+	 * @param string $port       DataBase Port
 	 */
-	public function __construct($hostname, $username, $password, $dbname, $key)
+	public function __construct($hostname, $username, $password, $dbname, $port)
 	{
-		$this->_key = $key;
-
 		$this->initLog();
 
 		try {
@@ -617,7 +593,7 @@ class v3SQLSrv extends WareHouse
 			    'username' => $username,
 			    'password' => $password,
 			    'charset' => 'utf8',
-			    'port' => 1433,
+			    'port' => $port,
 			    'option' => [
 			        PDO::ATTR_CASE => PDO::CASE_NATURAL
 			    ]
