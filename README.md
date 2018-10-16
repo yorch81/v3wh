@@ -36,7 +36,10 @@ Execute composer.phar install
 ## Example ##
 ~~~
 
-$v3ctor = V3WareHouse::getInstance('v3Mongo', $hostname, $username, $password, $dbname, $port);
+//$v3ctor = V3WareHouse::getInstance('v3Mongo', $hostname, $username, $password, $dbname, $port);
+
+// For PHP 7
+$v3ctor = V3WareHouse::getInstance('v3MongoDB', $hostname, $username, $password, $dbname, $port);
 
 if (! $v3ctor->isConnected())
     die("Unable load V3ctor WareHouse");

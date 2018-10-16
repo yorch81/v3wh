@@ -360,6 +360,237 @@ class v3Mongo extends WareHouse
 }
 
 /**
+ * v3Mongo WareHouse for MongoDB PHP 7
+ *
+ * @category   v3Mongo
+ * @package    v3Mongo
+ * @copyright  Copyright 2015 Jorge Alberto Ponce Turrubiates
+ * @license    http://www.apache.org/licenses/LICENSE-2.0
+ * @version    1.0.0, 2018-10-15
+ * @author     Jorge Alberto Ponce Turrubiates (the.yorch@gmail.com)
+ */
+class v3MongoDB extends WareHouse
+{
+	/**
+	 * Mongo Database
+	 * 
+	 * @var string
+	 */
+	private $db = "";
+
+	/**
+	 * Mongo URL
+	 * 
+	 * @var string
+	 */
+	private $url = "";
+
+	/**
+	 * Constructor of class
+	 * 
+	 * @param string $hostname   HostName MongoDb
+	 * @param string $username   User of MongoDb
+	 * @param string $password   Password of User
+	 * @param string $dbname     DataBase Name
+	 * @param string $port       DataBase Port 
+	 */
+	public function __construct($hostname, $username, $password, $dbname, $port)
+	{
+		$this->initLog();
+
+		try{
+			$this->db = $dbname;
+
+			$this->url = 'mongodb://' . $username . ':' . $password . '@' . $hostname . ':' . $port . '/' . $dbname;
+
+			$this->_conn = $this->url;
+        }
+        catch (Exception $e) {
+        	$this->_log->addError($e->getMessage());
+            $this->_conn = null;
+        }
+	}
+
+	/**
+	 * Find Object by _id
+	 *
+	 * @param  string $entity Entity
+	 * @param  string $_id 	  Identificator of Object
+	 * @return array Object
+	 */
+	public function findObject($entity, $_id)
+	{
+		$retValue = array();
+
+		try{
+			$m = new MongoDB\Driver\Manager($this->url);
+
+			$id = new \MongoDB\BSON\ObjectId($_id);
+			$filter = ['_id' => $id];
+			$options = [];
+
+			$query = new \MongoDB\Driver\Query($filter, $options);
+			$mCol = $this->db . "."  . $entity;
+			$jsonData = $m->executeQuery($mCol, $query);
+
+			$retValue = $jsonData->toArray();
+		}
+		catch(Exception $e) {
+			$this->_log->addError($e->getMessage());
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Find by Pattern (Query)
+	 *
+	 * @param  string $entity Entity
+	 * @param  array  $query  Query Pattern
+	 * @return array Object
+	 */
+	public function query($entity, $query)
+	{
+		$retValue = array();
+
+		try{
+			$m = new MongoDB\Driver\Manager($this->url);
+			$bulk = new MongoDB\Driver\BulkWrite;
+
+			$options = [];
+
+			$mQuery = new \MongoDB\Driver\Query($query, $options);
+			$mCol = $this->db . "."  . $entity;
+			$jsonData = $m->executeQuery($mCol, $mQuery);
+
+			$retValue = $jsonData->toArray();
+		}
+		catch(Exception $e) {
+			$this->_log->addError($e->getMessage());
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Create New Object
+	 *
+	 * @param  string $entity    Entity
+	 * @param  array $jsonObject Json Object to Insert
+	 * @return array Inserted Object
+	 */
+	public function newObject($entity, $jsonObject)
+	{
+		$retValue = array();
+
+		try{
+			$m = new MongoDB\Driver\Manager($this->url);
+			$bulk = new MongoDB\Driver\BulkWrite;
+
+			$id = $bulk->insert($jsonObject);
+
+			$mCol = $this->db . "."  . $entity;
+
+			$m->executeBulkWrite($mCol, $bulk);
+
+			$retValue = $this->findObject($entity, $id);	
+		}
+		catch(Exception $e) {
+			$this->_log->addError($e->getMessage());
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Update a Object by _id
+	 *
+	 * @param  string $entity    Entity
+	 * @param  string $_id       Identificator of Object
+	 * @param  array $jsonObject New Json Object
+	 * @return boolean
+	 */
+	public function updateObject($entity, $_id, $jsonObject)
+	{
+		$retValue = true;
+
+		try{
+			$m = new MongoDB\Driver\Manager($this->url);
+			$bulk = new MongoDB\Driver\BulkWrite;
+
+			$bulk->update(
+			   array("_id" => new MongoDB\BSON\ObjectId($_id)),
+			   ['$set' => $jsonObject]
+			);
+
+			$mCol = $this->db . "."  . $entity;
+
+			$m->executeBulkWrite($mCol, $bulk);
+		}
+		catch (Exception $e) {
+			$this->_log->addError($e->getMessage());
+		    $retValue = false;
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Delete Object by _id
+	 *
+	 * @param  string $entity Entity
+	 * @param  string $_id    Identificator of Object
+	 * @return boolean
+	 */
+	public function deleteObject($entity, $_id)
+	{
+		$retValue = true;
+
+		try{
+			$m = new MongoDB\Driver\Manager($this->url);
+			$bulk = new MongoDB\Driver\BulkWrite;
+
+			$bulk->delete(['_id' => new MongoDB\BSON\ObjectId($_id)], ['limit' => 1]);
+
+			$mCol = $this->db . "."  . $entity;
+
+			$m->executeBulkWrite($mCol, $bulk);
+		}
+		catch (Exception $e) {
+			$this->_log->addError($e->getMessage());
+		    $retValue = false;
+		}
+
+		return $retValue;
+	}
+
+	/**
+	 * Create Entity
+	 * 
+	 * @param  string $entityName Name of Entity
+	 * @param  array  $jsonConfig Json Configuration
+	 * @return boolean
+	 */
+	public function createEntity($entityName, $jsonConfig)
+	{
+		// Not Implemented for MongoDb
+		return false;
+	}
+
+	/**
+	 * Execute Command in DataBase
+	 *
+	 * @param  string $command Command
+	 * @return array Object
+	 */
+	public function execute ($command)
+	{
+		// Not Implemented for MongoDb
+		return array();
+	}
+}
+
+/**
  * v3MySQL WareHouse for MySQL or MariaDb
  *
  * @category   v3MySQL
