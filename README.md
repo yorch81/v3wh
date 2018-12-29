@@ -25,7 +25,7 @@ Create file composer.json
     	"php": ">=5.4.0",
         "yorch/v3wh" : "dev-master",
         "monolog/monolog": "1.13.1",
-        "catfan/medoo": "dev-master"
+        "catfan/medoo": "v1.1.2"
     }
 }
 
@@ -54,7 +54,7 @@ var_dump($newObject);
 
 ## Notes ##
 v3wh is a Core for MongoDb and needs php mongo module.
-For MySQL support is required a _id field in the table, check demo.sql.
+For MySQL and SQL Server support is required _id field in the table, check demo.sql.
 
 ## References ##
 http://es.wikipedia.org/wiki/Singleton

@@ -655,6 +655,8 @@ class v3MySQL extends WareHouse
 				$retValue = array();
 		}
 
+		$retValue = array('data' => $retValue);
+
 		return $retValue;
 	}
 
@@ -675,6 +677,8 @@ class v3MySQL extends WareHouse
 			if ($this->error($this->_conn->error()))
 				$retValue = array();
 		}
+
+		$retValue = array('data' => $retValue);
 
 		return $retValue;
 	}
@@ -856,6 +860,8 @@ class v3SQLSrv extends WareHouse
 				$retValue = array();
 		}
 
+		$retValue = array('data' => $retValue);
+
 		return $retValue;
 	}
 
@@ -877,6 +883,8 @@ class v3SQLSrv extends WareHouse
 				$retValue = array();
 		}
 
+		$retValue = array('data' => $retValue);
+		
 		return $retValue;
 	}
 

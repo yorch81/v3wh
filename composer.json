@@ -15,7 +15,7 @@
     "require": {
     	"php": ">=5.4.0",
         "monolog/monolog": "1.13.1",
-        "catfan/medoo": "dev-master"
+        "catfan/medoo": "v1.1.2"
     },
     "autoload": {
         "files": ["V3WareHouse.class.php"]
